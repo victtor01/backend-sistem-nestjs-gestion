@@ -80,19 +80,18 @@ model registers {
 }
 
 model clients_lists {
-  id     Int    @id @default(autoincrement())
-  name   String
-  color  String?
-  user   users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId Int
-
+  id      Int       @id @default(autoincrement())
+  name    String
+  color   String?
+  userId  Int
   clients clients[]
+
+  user users @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model clients {
-  id     Int           @id @default(autoincrement())
+  id     Int       @id @default(autoincrement())
   name   String
-  list   clients_lists @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   listId Int
   cpf    String
   phone  String?
@@ -103,17 +102,32 @@ model clients {
   createdAt DateTime @default(now())
   updateAt  DateTime @default(now())
 
-  clients_services clients_services[]
+  //clients_services clients_services[]
+  services services[]
+  address          clients_address[]
+  list             clients_lists      @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model clients_services {
-  id        Int @id @default(autoincrement())
-  clientId  Int
-  serviceId Int
-
-  clients  clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  services services @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+model clients_address {
+  id           Int     @id @default(autoincrement())
+  clientId     Int
+  street       String
+  cep          String
+  neighborhood String
+  number       String
+  client       clients @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
+
+//model clients_services {
+  //id        Int @id @default(autoincrement())
+  //clientId  Int
+  //serviceId Int
+
+  //clients  clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  //services services @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  //@@id([clientId, serviceId])
+//}
 
 model services {
   id        Int      @id @default(autoincrement())
@@ -126,6 +140,7 @@ model services {
   createdAt DateTime @default(now())
   updateAt  DateTime @default(now())
 
-  clients_services clients_services[]
+  clients clients[]
+  //clients_services clients_services[]
   user             users              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

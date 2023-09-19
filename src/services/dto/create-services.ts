@@ -18,7 +18,7 @@ export class CreateServicesDto {
 
   @IsDecimal({ decimal_digits: '2' })
   @IsNotEmpty()
-  price: number[];
+  price: number;
 
   @IsNumber()
   @IsOptional()
@@ -30,10 +30,4 @@ export class CreateServicesDto {
 
   @IsNumber()
   userId: number;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updateAt: Date;
 }

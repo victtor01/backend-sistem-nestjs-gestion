@@ -8,10 +8,12 @@ import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { WorkspacesModule } from './workspaces/workspaces.module';
-import { ConfirmationCodesModule } from './confirmation-codes/codes-confirmation';
+import { ConfirmationCodesModule } from './confirmation-codes/codes-confirmation.module';
 import { ClientsListsModule } from './clients-lists/clients_lists.module';
 import { ClientsModule } from './clients/clients.module';
 import { ServicesModule } from './services/services.module';
+import { EmailModule } from './email/email.module';
+import { ClientsAddressModule } from './clients-address/clients-address.module';
 
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import { ServicesModule } from './services/services.module';
     ClientsListsModule,
     ClientsModule,
     ServicesModule,
+    EmailModule,
+    ClientsAddressModule,
   ],
   controllers: [AppController],
   providers: [

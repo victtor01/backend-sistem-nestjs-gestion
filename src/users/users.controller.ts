@@ -12,16 +12,17 @@ import { Public } from 'src/constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { UsersService } from './users.service';
-import { ConfirmationCodesRepository } from 'src/confirmation-codes/repositories/codes-confirmation-repository';
-import { CreateConfirmationCodesDto } from 'src/confirmation-codes/dto/create-confirmation-codes.dto';
+import { EmailService } from 'src/email/email.service';
+import { ConfirmationCodesService } from 'src/confirmation-codes/confirmation-codes.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private users: UsersRepository,
     private readonly usersService: UsersService,
-    private readonly codesConfirmationRepository: ConfirmationCodesRepository
-  ) { }
+    private readonly confirmationCodesService: ConfirmationCodesService,
+    private readonly emailService: EmailService,
+  ) {}
 
   @Public()
   @Post('register')
@@ -47,8 +48,13 @@ export class UsersController {
     data.type = 1;
 
     const user = await this.users.create(data);
-    const { id } = user;
-    await this.codesConfirmationRepository.create({ userId: id, code: '123456' })
+    const { id, email } = user;
+    const { code } = await this.confirmationCodesService.create(id);
+
+    this.emailService.sendEmail({
+      to: email,
+      text: code,
+    });
 
     return {
       user,

@@ -16,11 +16,7 @@ export class PrismaClientsListsRepository implements ClientsListsRepository {
       include: {
         clients: {
           include: {
-            clients_services: {
-              include: {
-                services: true, // Inclua informações sobre o serviço associado
-              },
-            },
+            services: true
           },
         },
       },

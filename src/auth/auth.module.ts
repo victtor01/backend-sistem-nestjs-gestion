@@ -3,7 +3,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from 'src/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfirmationCodesModule } from 'src/confirmation-codes/codes-confirmation';
+import { ConfirmationCodesModule } from 'src/confirmation-codes/codes-confirmation.module';
+import { EmailService } from 'src/email/email.service';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ConfirmationCodesModule } from 'src/confirmation-codes/codes-confirmati
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService]
+  providers: [AuthService, EmailService],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -86,12 +86,14 @@ CREATE TABLE "clients" (
 );
 
 -- CreateTable
-CREATE TABLE "clients_services" (
+CREATE TABLE "clients_address" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "clientId" INTEGER NOT NULL,
-    "serviceId" INTEGER NOT NULL,
-    CONSTRAINT "clients_services_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "clients" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "clients_services_serviceId_fkey" FOREIGN KEY ("serviceId") REFERENCES "services" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "street" TEXT NOT NULL,
+    "cep" TEXT NOT NULL,
+    "neighborhood" TEXT NOT NULL,
+    "number" TEXT NOT NULL,
+    CONSTRAINT "clients_address_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "clients" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -108,6 +110,14 @@ CREATE TABLE "services" (
     CONSTRAINT "services_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- CreateTable
+CREATE TABLE "_clientsToservices" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_clientsToservices_A_fkey" FOREIGN KEY ("A") REFERENCES "clients" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_clientsToservices_B_fkey" FOREIGN KEY ("B") REFERENCES "services" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -119,3 +129,9 @@ CREATE UNIQUE INDEX "codes_confirmation_code_key" ON "codes_confirmation"("code"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "codes_confirmation_userId_key" ON "codes_confirmation"("userId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_clientsToservices_AB_unique" ON "_clientsToservices"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_clientsToservices_B_index" ON "_clientsToservices"("B");

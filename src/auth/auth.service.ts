@@ -9,6 +9,8 @@ import { jwtConstants } from './constants';
 import { User } from 'src/users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ConfirmationCodesRepository } from 'src/confirmation-codes/repositories/codes-confirmation-repository';
+import { EmailService } from 'src/email/email.service';
+import { ConfirmationCodesService } from 'src/confirmation-codes/confirmation-codes.service';
 
 @Injectable()
 export class AuthService {
@@ -16,15 +18,17 @@ export class AuthService {
     private UsersRepository: UsersRepository,
     private jwtService: JwtService,
     private confirmatinCodesRepository: ConfirmationCodesRepository,
+    private confirmationCodesService: ConfirmationCodesService,
+    private emailService: EmailService,
   ) { }
 
   async signIn(email: string, password: string): Promise<any> {
-    if(!email || !password) {
+    if (!email || !password) {
       throw new UnauthorizedException({
-        message: 'Houve um erro!'
-      })
-    } 
-    
+        message: 'Houve um erro!',
+      });
+    }
+
     const user = await this.UsersRepository.findOne(email);
 
     if (!user) {
@@ -40,6 +44,13 @@ export class AuthService {
     }
 
     if (user?.status.toString() === '1') {
+      const { code } = await this.confirmationCodesService.create(user.id);
+
+      this.emailService.sendEmail({
+        to: user.email,
+        text: code,
+      });
+
       return {
         status: 1,
         userId: user?.id,
@@ -67,16 +78,36 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
-      type
+      type,
     };
   }
 
-  async confirmEmail(userId: number, code: string): Promise<boolean> {
-    const dbCode = await this.confirmatinCodesRepository.findOne(code);
-    if (!dbCode) return false;
-    this.UsersRepository.update(userId, {
-      status: 2,
-    });
+  async confirmEmail(userId: number, codeConfirm: string): Promise<boolean> {
+
+    try {
+      const { id } = await this.confirmatinCodesRepository.findOne(
+        codeConfirm
+      );
+
+      if(!id) {
+        return false
+      }
+
+      const updated = await this.UsersRepository.update(userId, {
+        status: 2,
+      });
+
+      if(!updated) {
+        return true
+      }
+      
+      this.confirmatinCodesRepository.delete(id);
+
+      return true;
+
+    } catch (error) {
+      return false
+    }
   }
 
   private async generateToken(payload: User): Promise<string> {

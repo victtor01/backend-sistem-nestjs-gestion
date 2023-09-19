@@ -5,26 +5,48 @@ import { CreateConfirmationCodesDto } from 'src/confirmation-codes/dto/create-co
 import { ConfirmationCodes } from 'src/confirmation-codes/entities/confirmation-codes.entity';
 
 @Injectable()
-export class prismaCodesConfirmationRepository
+export class PrismaCodesConfirmationRepository
   implements ConfirmationCodesRepository
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(code: string): Promise<ConfirmationCodes>{
+  async findOne(code: string): Promise<ConfirmationCodes> {
     return await this.prisma.codes_confirmation.findFirst({
       where: {
-        code: code,
+        code,
       },
     });
   }
 
   async create(body: CreateConfirmationCodesDto): Promise<ConfirmationCodes> {
     const { userId, code } = body;
+  
+    const codeExist = await this.prisma.codes_confirmation.findFirst({
+      where: { userId },
+    });
+
+    if(codeExist) {
+      await this.prisma.codes_confirmation.delete({
+        where: { userId },
+      });
+    }
     return await this.prisma.codes_confirmation.create({
       data: {
         userId,
-        code
-      }
-    })
+        code,
+      },
+    });
+  }
+
+  async delete(id: number): Promise<boolean> {
+    const res = await this.prisma.codes_confirmation.delete({
+      where: { id },
+    });
+
+    if (res) {
+      return true;
+    }
+
+    return false;
   }
 }

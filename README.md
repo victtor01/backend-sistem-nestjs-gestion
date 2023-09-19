@@ -1,9 +1,12 @@
 # DOCS OF PROJECT
 
 ## Estrutura de pastas
-  ### O projeto se encontra no src
+  ### O projeto se encontra no ./SRC
   - [PASTA PRINCIPAL](./src)
-    
+    - [AUTH](./src/auth)
+    - [CLIENTS](./src/clients)
+    - [LISTA-DOS-CLIENTES](./src/clients-lists/)
+    - [USUÁRIO](./src/users/)
 
 ## Installation
 

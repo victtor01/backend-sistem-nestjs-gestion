@@ -4,15 +4,26 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateClientDto } from 'src/clients/dto/create-clients.dto';
 import { UpdateClientDto } from 'src/clients/dto/update-clients.dto';
+import { CreateClientsServicesDto } from 'src/clients/dto/create-clients-services.dto';
 
 @Injectable()
 export class PrismaClientsRepository implements ClientsRepository {
-  constructor(private readonly Prisma: PrismaService) {}
+  constructor(private readonly Prisma: PrismaService) { }
+
   async create(body: CreateClientDto): Promise<Clients> {
+    const { listId, ...props } = body;
     return this.Prisma.clients.create({
-      data: body,
+      data: {
+        ...props,
+        list: {
+          connect: {
+            id: listId,
+          },
+        },
+      },
     });
   }
+
   async update({
     id,
     body,
@@ -27,10 +38,25 @@ export class PrismaClientsRepository implements ClientsRepository {
       },
     });
 
-    if (res) {
-      return true;
-    }
+    return res ? true : false;
+  }
 
-    return false;
+  async createClientsServices(
+    body: CreateClientsServicesDto,
+  ): Promise<Clients> {
+    console.log('passou')
+    const { clientId, services } = body;
+    const connectServices = services.map((serviceId) => ({ id: serviceId }));
+
+    return await this.Prisma.clients.update({
+      where: {
+        id: clientId,
+      },
+      data: {
+       services: {
+        connect: connectServices
+       }
+      },
+    });
   }
 }
