@@ -7,9 +7,9 @@ import { ClientsRepository } from './repositories/clients-repository';
 export class ClientsService {
   constructor(private readonly clientsRepository: ClientsRepository) {}
 
-  async createClientsServices(
+  async connectClientsServices(
     data: CreateClientsServicesDto,
   ): Promise<Clients> {
-    return await this.clientsRepository.createClientsServices(data);
+    return await this.clientsRepository.connectClientsServices(data);
   }
 }

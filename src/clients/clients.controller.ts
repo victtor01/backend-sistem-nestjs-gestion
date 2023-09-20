@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Request } from '@nestjs/common';
 import { Clients } from './entities/clients.entity';
 import { ClientsRepository } from './repositories/clients-repository';
 import { CreateClientDto } from './dto/create-clients.dto';
@@ -13,11 +13,18 @@ export class ClientsController {
     private readonly ClientsRepository: ClientsRepository,
     private readonly clientsAddressService: ClientsAddressService,
     private readonly clientsService: ClientsService,
-  ) {}
+  ) { }
+
+  @Get('/:code')
+  async findOne(@Param('code') code: string, @Request() req): Promise<Clients> {
+    const userId = Number(req.user.id);
+    return await this.ClientsRepository.findOne({ code, userId})
+  }
 
   @Post('create')
-  async create(@Body() Body: CreateClientDto): Promise<Clients> {
-    return await this.ClientsRepository.create(Body);
+  async create(@Body() body: CreateClientDto, @Request() req): Promise<Clients> {
+    body.userId = req.user.id;
+    return await this.ClientsRepository.create(body);
   }
 
   @Put('update/:id')
@@ -35,6 +42,6 @@ export class ClientsController {
     @Param('id') id: number,
   ): Promise<Clients> {
     body.clientId = Number(id);
-    return await this.clientsService.createClientsServices(body);
+    return await this.clientsService.connectClientsServices(body);
   }
 }

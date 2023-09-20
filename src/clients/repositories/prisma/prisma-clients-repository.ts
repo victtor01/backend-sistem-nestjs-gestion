@@ -5,13 +5,27 @@ import { PrismaService } from 'src/database/prisma.service';
 import { CreateClientDto } from 'src/clients/dto/create-clients.dto';
 import { UpdateClientDto } from 'src/clients/dto/update-clients.dto';
 import { CreateClientsServicesDto } from 'src/clients/dto/create-clients-services.dto';
+import { findOneClientsDto } from 'src/clients/dto/findOne-clients.dto';
 
 @Injectable()
 export class PrismaClientsRepository implements ClientsRepository {
   constructor(private readonly Prisma: PrismaService) { }
 
+  async findOne({ code, userId }: findOneClientsDto): Promise<Clients> {
+    return await this.Prisma.clients.findFirst({
+      where: {
+        code,
+        userId
+      },
+      include: {
+        services: true,
+        address: true
+      }
+    })
+  }
+
   async create(body: CreateClientDto): Promise<Clients> {
-    const { listId, ...props } = body;
+    const { listId, userId, ...props } = body;
     return this.Prisma.clients.create({
       data: {
         ...props,
@@ -20,6 +34,11 @@ export class PrismaClientsRepository implements ClientsRepository {
             id: listId,
           },
         },
+        user: {
+          connect: {
+            id: userId
+          }
+        }
       },
     });
   }
@@ -41,21 +60,18 @@ export class PrismaClientsRepository implements ClientsRepository {
     return res ? true : false;
   }
 
-  async createClientsServices(
+  async connectClientsServices(
     body: CreateClientsServicesDto,
   ): Promise<Clients> {
-    console.log('passou')
     const { clientId, services } = body;
-    const connectServices = services.map((serviceId) => ({ id: serviceId }));
-
     return await this.Prisma.clients.update({
       where: {
         id: clientId,
       },
       data: {
-       services: {
-        connect: connectServices
-       }
+        services: {
+          connect: services?.map((serviceId) => ({ id: serviceId }))
+        }
       },
     });
   }

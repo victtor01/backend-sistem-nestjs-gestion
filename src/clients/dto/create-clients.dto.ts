@@ -7,4 +7,5 @@ export class CreateClientDto {
   email?: string;
   birth?: Date;
   photo?: string;
+  userId: number
 }

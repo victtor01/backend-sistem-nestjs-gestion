@@ -67,6 +67,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
+      user
     };
   }
 

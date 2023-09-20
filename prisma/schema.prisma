@@ -29,6 +29,7 @@ model users {
   confirmation  codes_confirmation?
   clients_lists clients_lists[]
   services      services[]
+  clients       clients[]
 }
 
 model codes_confirmation {
@@ -90,22 +91,36 @@ model clients_lists {
 }
 
 model clients {
-  id     Int       @id @default(autoincrement())
-  name   String
-  listId Int
-  cpf    String
-  phone  String?
-  email  String?
-  birth  DateTime?
-  photo  String?
-
-  createdAt DateTime @default(now())
-  updateAt  DateTime @default(now())
+  id        Int       @id @default(autoincrement())
+  name      String
+  listId    Int
+  code      String    @default(uuid())
+  cpf       String
+  phone     String?
+  email     String?
+  birth     DateTime?
+  photo     String?
+  userId    Int
+  createdAt DateTime  @default(now())
+  updateAt  DateTime  @default(now())
 
   //clients_services clients_services[]
-  services services[]
-  address          clients_address[]
-  list             clients_lists      @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  services    services[]
+  address     clients_address[]
+  comentaries clients_comentaries[]
+
+  list clients_lists @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model clients_comentaries {
+  id        Int      @id @default(autoincrement())
+  text      String
+  color     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  clientId  Int
+  client    clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model clients_address {
@@ -119,14 +134,14 @@ model clients_address {
 }
 
 //model clients_services {
-  //id        Int @id @default(autoincrement())
-  //clientId  Int
-  //serviceId Int
+//id        Int @id @default(autoincrement())
+//clientId  Int
+//serviceId Int
 
-  //clients  clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  //services services @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//clients  clients  @relation(fields: [clientId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+//services services @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  //@@id([clientId, serviceId])
+//@@id([clientId, serviceId])
 //}
 
 model services {
@@ -142,5 +157,5 @@ model services {
 
   clients clients[]
   //clients_services clients_services[]
-  user             users              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    users     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
