@@ -9,19 +9,20 @@ import { findOneClientsDto } from 'src/clients/dto/findOne-clients.dto';
 
 @Injectable()
 export class PrismaClientsRepository implements ClientsRepository {
-  constructor(private readonly Prisma: PrismaService) { }
+  constructor(private readonly Prisma: PrismaService) {}
 
   async findOne({ code, userId }: findOneClientsDto): Promise<Clients> {
     return await this.Prisma.clients.findFirst({
       where: {
         code,
-        userId
+        userId,
       },
       include: {
         services: true,
-        address: true
-      }
-    })
+        address: true,
+        comentaries: true
+      },
+    });
   }
 
   async create(body: CreateClientDto): Promise<Clients> {
@@ -36,10 +37,14 @@ export class PrismaClientsRepository implements ClientsRepository {
         },
         user: {
           connect: {
-            id: userId
-          }
-        }
+            id: userId,
+          },
+        },
       },
+      include: {
+        services: true,
+        address: true,
+      }
     });
   }
 
@@ -70,8 +75,8 @@ export class PrismaClientsRepository implements ClientsRepository {
       },
       data: {
         services: {
-          connect: services?.map((serviceId) => ({ id: serviceId }))
-        }
+          connect: services?.map((serviceId) => ({ id: serviceId })),
+        },
       },
     });
   }

@@ -20,7 +20,7 @@ export class AuthService {
     private confirmatinCodesRepository: ConfirmationCodesRepository,
     private confirmationCodesService: ConfirmationCodesService,
     private emailService: EmailService,
-  ) { }
+  ) {}
 
   async signIn(email: string, password: string): Promise<any> {
     if (!email || !password) {
@@ -67,7 +67,7 @@ export class AuthService {
     return {
       access_token,
       refresh_token,
-      user
+      user,
     };
   }
 
@@ -84,30 +84,26 @@ export class AuthService {
   }
 
   async confirmEmail(userId: number, codeConfirm: string): Promise<boolean> {
-
     try {
-      const { id } = await this.confirmatinCodesRepository.findOne(
-        codeConfirm
-      );
+      const { id } = await this.confirmatinCodesRepository.findOne(codeConfirm);
 
-      if(!id) {
-        return false
+      if (!id) {
+        return false;
       }
 
       const updated = await this.UsersRepository.update(userId, {
         status: 2,
       });
 
-      if(!updated) {
-        return true
+      if (!updated) {
+        return true;
       }
-      
+
       this.confirmatinCodesRepository.delete(id);
 
       return true;
-
     } catch (error) {
-      return false
+      return false;
     }
   }
 

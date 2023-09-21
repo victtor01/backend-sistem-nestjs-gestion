@@ -107,13 +107,13 @@ model clients {
   //clients_services clients_services[]
   services    services[]
   address     clients_address[]
-  comentaries clients_comentaries[]
+  comentaries clients_comments[]
 
   list clients_lists @relation(fields: [listId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   user users         @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
-model clients_comentaries {
+model clients_comments {
   id        Int      @id @default(autoincrement())
   text      String
   color     String?

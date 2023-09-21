@@ -14,6 +14,7 @@ import { ClientsModule } from './clients/clients.module';
 import { ServicesModule } from './services/services.module';
 import { EmailModule } from './email/email.module';
 import { ClientsAddressModule } from './clients-address/clients-address.module';
+import { ClientsCommentsModule } from './clients-comments/clients-comments.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ClientsAddressModule } from './clients-address/clients-address.module';
     ServicesModule,
     EmailModule,
     ClientsAddressModule,
+    ClientsCommentsModule,
   ],
   controllers: [AppController],
   providers: [

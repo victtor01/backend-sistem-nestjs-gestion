@@ -6,14 +6,14 @@
 
 */
 -- CreateTable
-CREATE TABLE "clients_comentaries" (
+CREATE TABLE "clients_comments" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "text" TEXT NOT NULL,
     "color" TEXT,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "clientId" INTEGER NOT NULL,
-    CONSTRAINT "clients_comentaries_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "clients" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "clients_comments_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "clients" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- RedefineTables
